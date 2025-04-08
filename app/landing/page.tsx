@@ -1,4 +1,4 @@
-import LoginModal from "@/feature/login/components/login-modal";
+import LoginModal from "@/components/login/login-modal";
 
 export default function Page() {
   return (

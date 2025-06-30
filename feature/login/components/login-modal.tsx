@@ -174,7 +174,7 @@ function LoginModal() {
             type="button"
             variant="outline"
             className="w-full bg-[#FEE500] text-black hover:bg-[#FEE500]/90 border-[#FEE500]"
-            onClick={handleKakaoLogin}
+            onClick={loginWithKakao}
             disabled={isLoading}
           >
             <svg

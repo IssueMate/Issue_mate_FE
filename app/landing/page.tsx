@@ -1,6 +1,24 @@
-import LoginModal from "@/components/login/login-modal";
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import LoginModal from "@/feature/login/components/login-modal";
+import SignupNeededModal from "@/feature/login/components/signup-needed-modal";
 
 export default function Page() {
+  const searchParams = useSearchParams();
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const kakaoId = searchParams.get("kakaoId");
+  const email = searchParams.get("email");
+  const name = searchParams.get("name");
+
+  useEffect(() => {
+    if (searchParams.get("signupNeeded")) {
+      setShowSignupModal(true);
+    }
+  }, [searchParams]);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <div className="mb-8">
@@ -10,6 +28,14 @@ export default function Page() {
         </p>
       </div>
       <LoginModal />
+      {showSignupModal && (
+        <SignupNeededModal
+          onClose={() => setShowSignupModal(false)}
+          kakaoId={kakaoId}
+          email={email}
+          name={name}
+        />
+      )}
     </main>
   );
 }

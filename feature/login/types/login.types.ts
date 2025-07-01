@@ -1,5 +1,5 @@
 /**
- * 로그인 인증 정보 타입
+ * 일반 로그인 인증 정보 타입 (자체 회원)
  */
 export interface LoginCredentials {
   email: string;
@@ -7,17 +7,19 @@ export interface LoginCredentials {
 }
 
 /**
- * 사용자 정보 타입
+ * 회원 공통 정보 타입
  */
 export interface User {
-  id: string;
-  email: string;
+  id: number;
+  userEmail: string;
   name: string;
-  avatar?: string;
+  provider?: string;
+  providerId?: string;
+  phone?: string;
 }
 
 /**
- * 로그인 응답 타입
+ * 로그인 응답 타입 (자체/소셜 공통)
  */
 export interface LoginResponse {
   success: boolean;
@@ -27,8 +29,27 @@ export interface LoginResponse {
 }
 
 /**
- * 소셜 로그인 응답 타입
+ * 소셜 로그인 응답 타입 (provider 명시)
  */
 export interface SocialLoginResponse extends LoginResponse {
-  provider?: "kakao" | "google" | "facebook" | "apple";
+  provider: "kakao" | "google" | "facebook" | "apple";
+}
+
+/**
+ * 카카오에서 받아온 회원 정보 (백엔드 KakaoUserInfoDto와 싱크)
+ */
+export interface KakaoUserInfoDto {
+  email: string;
+  nickname: string;
+  kakaoId: string;
+}
+
+/**
+ * 카카오 회원가입용 DTO (추가 정보 입력)
+ */
+export interface KakaoSocialSignUpDto {
+  email: string;
+  nickname: string;
+  kakaoId: string;
+  phone: string;
 }

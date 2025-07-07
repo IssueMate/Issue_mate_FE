@@ -12,9 +12,11 @@ export default async function registerKakaoUser(
     body: JSON.stringify(payload),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("회원가입에 실패했습니다.");
+    throw new Error(data.message || "회원가입에 실패했습니다.");
   }
 
-  return response.json();
+  return data;
 }

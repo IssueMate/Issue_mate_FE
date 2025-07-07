@@ -5,14 +5,14 @@ import type {
 } from "@/feature/login/types/login.types";
 
 /**
- * 일반 로그인 처리 함수
+ * 일반 로그인 처리 함수 -> 추후 일반 로그인 API 개발 시 사용할 것
  */
 export async function login(
   credentials: LoginCredentials
 ): Promise<LoginResponse> {
   try {
-    // 실제 API 호출 구현
-    const response = await fetch("http://localhost:8080/auth/kakao/login", {
+    // 임시 API 호출 구현
+    const response = await fetch("http://localhost:8080/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),

@@ -5,12 +5,13 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { KakaoSocialSignUpRequest } from "@/feature/social-signup/types/signup.types";
 import registerKakaoUser from "@/feature/social-signup/api/register";
+import PhoneAuthSection from "@/feature/phone-auth/components/PhoneAuthSection";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { User, Phone, Shield } from "lucide-react";
+import { User, Phone, Shield, CheckCircle } from "lucide-react";
 import type { CheckedState } from "@radix-ui/react-checkbox";
 
 export default function SocialSignupForm() {
@@ -25,6 +26,7 @@ export default function SocialSignupForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [termsAgreed, setTermsAgreed] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -49,6 +51,13 @@ export default function SocialSignupForm() {
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhoneNumber(e.target.value);
     setPhone(formatted);
+    if (phoneVerified) {
+      setPhoneVerified(false);
+    }
+  };
+
+  const handlePhoneVerified = () => {
+    setPhoneVerified(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,7 +68,10 @@ export default function SocialSignupForm() {
       setError("실명, 휴대폰번호, 약관동의 모두 필수입니다.");
       return;
     }
-
+    if (!phoneVerified) {
+      setError("휴대폰 인증을 완료해주세요.");
+      return;
+    }
     // 휴대폰 번호 유효성 검사
     const phoneNumbers = phone.replace(/[^\d]/g, "");
     if (phoneNumbers.length !== 11) {
@@ -89,6 +101,9 @@ export default function SocialSignupForm() {
     }
   };
 
+  // 휴대폰 인증 비활성화 조건
+  const isPhoneAuthDisabled = phone.replace(/[^\d]/g, "").length !== 11;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4">
       <div className="w-full max-w-md">
@@ -109,7 +124,7 @@ export default function SocialSignupForm() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-
+          {/* 실명 입력 */}
           <div className="space-y-2">
             <Label
               htmlFor="name"
@@ -128,14 +143,19 @@ export default function SocialSignupForm() {
             />
           </div>
 
-          <div className="space-y-2">
+          {/* 휴대폰 번호 입력 및 인증 */}
+          <div className="space-y-3">
             <Label
               htmlFor="phone"
               className="text-gray-200 font-medium flex items-center gap-2"
             >
               <Phone className="w-4 h-4" />
               휴대폰번호
+              {phoneVerified && (
+                <CheckCircle className="w-4 h-4 text-green-400 ml-auto" />
+              )}
             </Label>
+
             <Input
               id="phone"
               value={phone}
@@ -143,10 +163,18 @@ export default function SocialSignupForm() {
               placeholder="010-1234-5678"
               className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-gray-600 focus:ring-gray-600"
               autoComplete="tel"
-              maxLength={13} // 010-1234-5678 형태의 최대 길이
+              maxLength={13}
+              disabled={phoneVerified}
+            />
+
+            <PhoneAuthSection
+              phone={phone}
+              disabled={isPhoneAuthDisabled}
+              onVerified={handlePhoneVerified}
             />
           </div>
 
+          {/* 약관 동의 */}
           <div className="space-y-4">
             <div className="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
               <Checkbox
